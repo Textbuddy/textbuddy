@@ -3,11 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TextBuddy Pro - AI Writing Assistant</title>
+  <title>TextBuddy Pro - AI-Powered Writing Assistant for Students</title>
+  <meta name="description" content="Free online writing assistant with grammar checking, plagiarism detection, AI suggestions, and citation generator. Perfect for students and writers.">
+  <meta name="keywords" content="writing assistant, grammar checker, plagiarism checker, AI writing, student tools, essay checker, citation generator">
+  <meta name="author" content="TextBuddy">
+  <meta name="robots" content="index, follow">
+  <meta property="og:title" content="TextBuddy Pro - AI Writing Assistant">
+  <meta property="og:description" content="Free online writing assistant with grammar checking, plagiarism detection, and AI suggestions.">
+  <meta property="og:type" content="website">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8C9M6SRR2X"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-8C9M6SRR2X');
+  </script>
   <style>
     :root{
       --primary:#15c39a; --secondary:#4a6cf7; --error:#f56565; --warning:#f59e0b; --ai:#9c27b0;
@@ -38,7 +53,7 @@
       padding:8px 10px;border-radius:8px;font-weight:600;box-shadow:var(--soft);outline:none; font-size: 14px;
     }
     .btn{
-      border:0;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer;font-size: 14px;
+      border:0;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer;
       background:var(--primary);color:#fff;box-shadow:var(--ring);transition:.2s transform,.2s box-shadow
     }
     .btn:hover{transform:translateY(-1px)}
@@ -535,10 +550,6 @@
   </main>
 
   <script>
-    // ====== GEMINI API CONFIGURATION ======
-    const GEMINI_API_KEY = 'AIzaSyBq_2LxNgG6v8QrB0PreK80TONvdedkq4o';
-    const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
-    
     // ====== ELEMENTS ======
     const body = document.body;
     const editor = document.getElementById('text-editor');
@@ -559,12 +570,6 @@
     const uiLangSelect = document.getElementById('ui-language-select');
     const darkToggle = document.getElementById('dark-toggle');
     const formatBtns = document.querySelectorAll('.format-btn');
-    const readabilityScoreEl = document.getElementById('readability-score');
-    const gradeLevelEl = document.getElementById('grade-level');
-    const readabilityBarEl = document.getElementById('readability-bar');
-    const historyContainer = document.getElementById('history-container');
-    const clearHistoryBtn = document.getElementById('clear-history');
-    const autoSaveStatus = document.getElementById('auto-save-status');
     
     // AI Elements
     const aiPrompt = document.getElementById('ai-prompt');
@@ -749,17 +754,11 @@
       
       // Update word goal progress
       updateWordGoalProgress(words);
-      
-      // Calculate readability score
-      calculateReadability(txt);
     }
 
     function calculateReadability(text) {
       if (!text.trim()) {
-        readabilityScoreEl.textContent = "N/A";
-        gradeLevelEl.textContent = "N/A";
-        readabilityBarEl.style.width = "0%";
-        return;
+        return "N/A";
       }
       
       // Simple Flesch Reading Ease approximation
@@ -768,25 +767,13 @@
       const syllables = countSyllables(text);
       
       if (sentences === 0 || words === 0) {
-        readabilityScoreEl.textContent = "N/A";
-        gradeLevelEl.textContent = "N/A";
-        return;
+        return "N/A";
       }
       
       const flesch = 206.835 - (1.015 * (words / sentences)) - (84.6 * (syllables / words));
       const score = Math.max(0, Math.min(100, flesch));
       
-      readabilityScoreEl.textContent = Math.round(score);
-      readabilityBarEl.style.width = `${score}%`;
-      
-      // Determine grade level
-      if (score >= 90) gradeLevelEl.textContent = "5th Grade";
-      else if (score >= 80) gradeLevelEl.textContent = "6th Grade";
-      else if (score >= 70) gradeLevelEl.textContent = "7th Grade";
-      else if (score >= 60) gradeLevelEl.textContent = "8-9th Grade";
-      else if (score >= 50) gradeLevelEl.textContent = "10-12th Grade";
-      else if (score >= 30) gradeLevelEl.textContent = "College";
-      else gradeLevelEl.textContent = "College Graduate";
+      return Math.round(score);
     }
 
     function countSyllables(text) {
@@ -852,6 +839,7 @@
 
     function renderHistory() {
       const history = JSON.parse(localStorage.getItem('textbuddyHistory') || '[]');
+      const historyContainer = document.getElementById('history-container');
       historyContainer.innerHTML = '';
       
       if (history.length === 0) {
@@ -882,12 +870,16 @@
       });
     }
 
-    clearHistoryBtn.addEventListener('click', () => {
-      if (confirm('Are you sure you want to clear all history?')) {
-        localStorage.removeItem('textbuddyHistory');
-        renderHistory();
-      }
-    });
+    // Clear history button
+    const clearHistoryBtn = document.getElementById('clear-history');
+    if (clearHistoryBtn) {
+      clearHistoryBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear all history?')) {
+          localStorage.removeItem('textbuddyHistory');
+          renderHistory();
+        }
+      });
+    }
 
     renderHistory();
 
@@ -1061,106 +1053,7 @@
 
     checkBtn.addEventListener('click', runGrammar);
 
-    // ====== GEMINI AI INTEGRATION ======
-    async function callGeminiAPI(prompt, text) {
-      try {
-        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{
-                text: `${prompt}\n\nText: "${text}"`
-              }]
-            }]
-          })
-        });
-        
-        if (!response.ok) {
-          throw new Error(`Gemini API error: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        return data.candidates[0].content.parts[0].text;
-      } catch (error) {
-        console.error('Error calling Gemini API:', error);
-        throw error;
-      }
-    }
-
-    // AI Assist function
-    async function runAIAssist(action) {
-      const text = stripHtml(editor.innerHTML);
-      if (!text.trim()) {
-        alert('Please write some text first!');
-        return;
-      }
-      
-      const t = T[currentUILang] || T.en;
-      
-      // Show loading state
-      aiOutput.innerHTML = '<div class="suggestion"><b><span class="loading"></span> AI is thinking...</b></div>';
-      
-      let prompt = '';
-      switch(action) {
-        case 'improve':
-          prompt = 'Improve the following text for clarity, grammar, and style while preserving its original meaning:';
-          break;
-        case 'expand':
-          prompt = 'Expand the following text by adding more details, examples, and explanations:';
-          break;
-        case 'summarize':
-          prompt = 'Summarize the following text concisely while keeping the main points:';
-          break;
-        case 'rephrase':
-          prompt = 'Rephrase the following text using different words and sentence structures:';
-          break;
-        case 'custom':
-          prompt = aiPrompt.value;
-          if (!prompt.trim()) {
-            alert('Please enter a custom prompt for the AI.');
-            return;
-          }
-          break;
-      }
-      
-      try {
-        const result = await callGeminiAPI(prompt, text);
-        aiOutput.innerHTML = `
-          <div class="suggestion ai-suggestion">
-            <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
-              <span class="badge" style="background:var(--ai);">AI Suggestion</span>
-              <span>${action.charAt(0).toUpperCase() + action.slice(1)}</span>
-            </div>
-            <div style="margin-bottom:10px;">${escapeHtml(result)}</div>
-            <button class="btn ai" style="width:100%" onclick="applyAISuggestion('${escapeHtml(result)}')">
-              <i class="fas fa-check"></i> Apply Suggestion
-            </button>
-          </div>
-        `;
-      } catch (error) {
-        aiOutput.innerHTML = `<div class="suggestion" style="color:var(--error)">Error: Unable to get AI response. Please try again.</div>`;
-      }
-    }
-
-    // Apply AI suggestion
-    function applyAISuggestion(suggestion) {
-      editor.innerHTML = suggestion;
-      updateCounts();
-      autoSave();
-      aiOutput.innerHTML = '<div class="suggestion"><b>AI suggestion applied successfully! ✅</b></div>';
-    }
-
-    // AI event listeners
-    aiImproveBtn.addEventListener('click', () => runAIAssist('improve'));
-    aiExpandBtn.addEventListener('click', () => runAIAssist('expand'));
-    aiSummarizeBtn.addEventListener('click', () => runAIAssist('summarize'));
-    aiRephraseBtn.addEventListener('click', () => runAIAssist('rephrase'));
-    aiAssistBtn.addEventListener('click', () => runAIAssist('custom'));
-
-    // ====== DOWNLOADS ======
+     // ====== DOWNLOADS ======
     downloadDocBtn.addEventListener('click', () => {
       const text = stripHtml(editor.innerHTML);
       if (!text.trim()) {
@@ -1349,10 +1242,9 @@
           timerSeconds++;
           updateTimerDisplay();
           // Update writing statistics
-          const timeWritingElement = document.getElementById('time-writing');
-          if (timeWritingElement) {
+          if (timeWriting) {
             const minutes = Math.floor(timerSeconds / 60);
-            timeWritingElement.textContent = `${minutes} minutes`;
+            timeWriting.textContent = `${minutes} minutes`;
           }
         }, 1000);
       }
@@ -1377,7 +1269,7 @@
       argumentative: "<h2>Introduction</h2><p>Introduce your topic and state your thesis.</p><h2>Body Paragraphs</h2><p>Present your arguments with supporting evidence.</p><h2>Counterargument</h2><p>Address opposing viewpoints.</p><h2>Conclusion</h2><p>Summarize your arguments and restate your thesis.</p>",
       narrative: "<h2>Introduction</h2><p>Set the scene and introduce characters.</p><h2>Plot Development</h2><p>Describe the sequence of events.</p><h2>Climax</h2><p>Present the turning point of your story.</p><h2>Conclusion</h2><p>Resolve the story and share the lesson learned.</p>",
       descriptive: "<h2>Introduction</h2><p>Introduce the subject of your description.</p><h2>Detailed Description</h2><p>Use sensory details to describe your subject.</p><h2>Significance</h2><p>Explain why this subject is important.</p><h2>Conclusion</h2><p>Summarize your description.</p>",
-      expository: "<h2>Introduction</h2><p>Introduce the topic and your thesis.</p><h2>Explanation</h2<p>Explain the topic with facts and examples.</p><h2>Analysis</h2><p>Analyze the information presented.</p><h2>Conclusion</h2><p>Summarize your explanation.</p>",
+      expository: "<h2>Introduction</h2><p>Introduce the topic and your thesis.</p><h2>Explanation</h2><p>Explain the topic with facts and examples.</p><h2>Analysis</h2><p>Analyze the information presented.</p><h2>Conclusion</h2><p>Summarize your explanation.</p>",
       "compare-contrast": "<h2>Introduction</h2><p>Introduce the two subjects being compared.</p><h2>Similarities</h2><p>Discuss how the subjects are similar.</p><h2>Differences</h2><p>Discuss how the subjects are different.</p><h2>Conclusion</h2><p>Summarize the comparison and state which is better (if applicable).</p>"
     };
 
@@ -1408,7 +1300,7 @@
       
       let citation = "";
       
-      // Simple citation examples (in real app, you'd use a proper citation library)
+      // Simple citation examples
       if (style === "apa") {
         if (type === "book") {
           citation = `${author} (${year}). <i>${title}</i>. Publisher.`;
@@ -1423,7 +1315,7 @@
         }
       } else if (style === "chicago") {
         if (type === "book") {
-          citation = `${author}. <i>${title</i>. Publisher, ${year}.`;
+          citation = `${author}. <i>${title}</i>. Publisher, ${year}.`;
         } else if (type === "website") {
           citation = `${author}. "${title}." Website Name. Last modified Month Day, ${year}. URL.`;
         }
@@ -1560,9 +1452,7 @@ Words: ${wordCountEl.textContent}
 Characters: ${charCountEl.textContent}
 Sentences: ${sentenceCountEl.textContent}
 Reading Time: ${readingTimeEl.textContent}
-Readability Score: ${readabilityScoreEl.textContent}
-Grade Level: ${gradeLevelEl.textContent}
-Time Spent Writing: ${document.getElementById('time-writing').textContent}
+Time Spent Writing: ${document.getElementById('time-writing') ? document.getElementById('time-writing').textContent : '0 minutes'}
       `.trim();
       
       const blob = new Blob([stats], { type: 'text/plain' });
@@ -1577,20 +1467,22 @@ Time Spent Writing: ${document.getElementById('time-writing').textContent}
     });
 
     // Reset statistics
-    resetStatsBtn.addEventListener('click', () => {
-      if (confirm('Are you sure you want to reset all writing statistics?')) {
-        localStorage.removeItem('writingStats');
-        document.getElementById('time-writing').textContent = '0 minutes';
-        document.getElementById('wpm-stat').textContent = '0';
-        document.getElementById('common-words').textContent = '-';
-        timerSeconds = 0;
-        updateTimerDisplay();
-        if (timerInterval) {
-          clearInterval(timerInterval);
-          timerRunning = false;
+    if (resetStatsBtn) {
+      resetStatsBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to reset all writing statistics?')) {
+          localStorage.removeItem('writingStats');
+          if (timeWriting) timeWriting.textContent = '0 minutes';
+          if (wpmStat) wpmStat.textContent = '0';
+          if (commonWords) commonWords.textContent = '-';
+          timerSeconds = 0;
+          updateTimerDisplay();
+          if (timerInterval) {
+            clearInterval(timerInterval);
+            timerRunning = false;
+          }
         }
-      }
-    });
+      });
+    }
 
     // ====== QUALITY OF LIFE ======
     // Paste as plain text (avoid weird HTML)
@@ -1619,12 +1511,6 @@ Time Spent Writing: ${document.getElementById('time-writing').textContent}
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
         runGrammar();
-      }
-      
-      // Ctrl/Cmd + Shift + A for AI assist
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'A') {
-        e.preventDefault();
-        runAIAssist('custom');
       }
     });
 
