@@ -3,27 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TextBuddy</title>
+  <title>TextBuddy Pro - AI Writing Assistant</title>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8C9M6SRR2X"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-8C9M6SRR2X');
-</script>
   <style>
     :root{
-      --primary:#15c39a; --secondary:#4a6cf7; --error:#f56565;
+      --primary:#15c39a; --secondary:#4a6cf7; --error:#f56565; --warning:#f59e0b; --ai:#9c27b0;
       --bg:#f6f7fb; --card:#ffffff; --text:#1f2732; --muted:#738091;
       --ring:0 8px 24px rgba(21,195,154,.25); --soft:0 4px 16px rgba(0,0,0,.08);
     }
     body.dark{
       --bg:#0f1623; --card:#121a2a; --text:#e7eefb; --muted:#a7b4c9;
-      --primary:#38b2ac; --secondary:#7aa2ff; --error:#ff7b7b;
+      --primary:#38b2ac; --secondary:#7aa2ff; --error:#ff7b7b; --warning:#fbbf24; --ai:#ba68c8;
       --ring:0 8px 24px rgba(56,178,172,.25); --soft:0 4px 16px rgba(0,0,0,.35);
     }
     *{box-sizing:border-box}
@@ -52,6 +45,8 @@
     .btn.secondary{background:linear-gradient(180deg,#eef2ff,#e7ecff);color:#23324d}
     body.dark .btn.secondary{background:#2b3750;color:#e7eefb}
     .btn.ghost{background:transparent;color:var(--text);border:1px solid rgba(0,0,0,.08)}
+    .btn.warning{background:var(--warning);color:#fff;}
+    .btn.ai{background:var(--ai);color:#fff;}
     .toggle{width:40px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center; font-size: 16px;}
     main{max-width:100%;margin:15px auto;display:block;gap:15px;padding:0 15px}
     .card{background:var(--card);border-radius:14px;box-shadow:var(--soft); margin-bottom: 15px;}
@@ -70,12 +65,13 @@
     .badge{font-size:.7rem;padding:2px 6px;border-radius:999px;background:#eef2ff;color:#243560;font-weight:700}
     body.dark .badge{background:#2b3750;color:#bcd0ff}
     .highlight{background:rgba(245,101,101,.22);border-bottom:2px dashed var(--error);border-radius:5px;padding:0 2px;cursor:pointer}
+    .ai-suggestion{background:rgba(156,39,176,.1);border-left:3px solid var(--ai);}
     .donate{margin-top:15px;padding:12px;border-radius:12px;background:linear-gradient(135deg,rgba(21,195,154,.15),rgba(74,108,247,.12))}
     .donate .btn{width:100%}
     .tips{font-size:.8rem;color:var(--muted);margin-top:8px}
     
     /* New styles for enhanced features */
-    .format-toolbar {display: flex; gap: 5px; margin: 0 0 10px 0;}
+    .format-toolbar {display: flex; gap: 5px; margin: 0 0 10px 0; flex-wrap: wrap;}
     .format-btn {padding: 6px 10px; border-radius: 6px; background: var(--card); border: 1px solid rgba(0,0,0,.08); cursor: pointer; font-size: 14px;}
     .stats-grid {display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;}
     .stat-item {background: rgba(0,0,0,.04); padding: 8px; border-radius: 8px; text-align: center; font-size: 13px;}
@@ -91,6 +87,29 @@
     .tooltip:hover .tooltiptext {visibility: visible; opacity: 1;}
     .loading {display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite;}
     @keyframes spin {to {transform: rotate(360deg);}}
+    
+    /* New advanced features */
+    .advanced-features {display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;}
+    .feature-card {background: var(--card); border-radius: 12px; padding: 12px; box-shadow: var(--soft);}
+    .feature-card h3 {margin: 0 0 10px 0; font-size: 14px; color: var(--primary);}
+    .feature-content {font-size: 13px;}
+    .timer-display {font-size: 18px; font-weight: 700; text-align: center; color: var(--primary); margin: 5px 0;}
+    .goal-progress {height: 8px; background: rgba(0,0,0,.1); border-radius: 4px; margin: 8px 0;}
+    .goal-progress-fill {height: 100%; border-radius: 4px; background: var(--primary);}
+    .tab-container {margin-top: 15px;}
+    .tab-buttons {display: flex; border-bottom: 1px solid rgba(0,0,0,.1);}
+    .tab-btn {padding: 8px 12px; background: none; border: none; cursor: pointer; font-weight: 600; color: var(--muted);}
+    .tab-btn.active {color: var(--primary); border-bottom: 2px solid var(--primary);}
+    .tab-content {padding: 12px 0;}
+    .citation-form {display: flex; flex-direction: column; gap: 8px;}
+    .citation-form input, .citation-form select {padding: 8px; border-radius: 6px; border: 1px solid rgba(0,0,0,.1);}
+    .citation-result {margin-top: 10px; padding: 10px; background: rgba(0,0,0,.05); border-radius: 6px; font-size: 13px;}
+    .speech-btn {display: flex; align-items: center; justify-content: center; gap: 5px;}
+    
+    /* AI Features */
+    .ai-features {margin-top: 15px;}
+    .ai-prompt {width: 100%; padding: 10px; border-radius: 8px; border: 1px solid rgba(0,0,0,.1); margin-bottom: 8px; resize: vertical; min-height: 60px;}
+    .ai-actions {display: grid; grid-template-columns: 1fr 1fr; gap: 8px;}
     
     /* Mobile-specific styles */
     @media (max-width: 768px) {
@@ -136,7 +155,7 @@
       .editor {
         min-height: 250px;
         padding: 12px;
-        font-size: 16px; /* Keep readable on mobile */
+        font-size: 16px;
       }
       
       .editor-footer {
@@ -174,6 +193,14 @@
       
       .donate .btn {
         font-size: 13px;
+      }
+      
+      .advanced-features {
+        grid-template-columns: 1fr;
+      }
+      
+      .ai-actions {
+        grid-template-columns: 1fr;
       }
     }
     
@@ -222,6 +249,11 @@
       .chip {
         text-align: center;
       }
+      
+      .tab-buttons {
+        overflow-x: auto;
+        white-space: nowrap;
+      }
     }
     
     /* Button groups for mobile */
@@ -237,12 +269,44 @@
       min-width: 120px;
       text-align: center;
     }
+    
+    /* Focus mode */
+    .focus-mode .sidebar,
+    .focus-mode .editor-header .button-group:not(#focus-controls),
+    .focus-mode .format-toolbar,
+    .focus-mode .editor-footer {
+      display: none !important;
+    }
+    
+    .focus-mode .editor {
+      min-height: 70vh;
+      border: none;
+      box-shadow: none;
+      background: transparent;
+    }
+    
+    .focus-mode .editor-header {
+      justify-content: center;
+    }
+    
+    /* Reading mode */
+    .reading-mode {
+      font-family: 'Georgia', serif;
+      line-height: 1.8;
+      font-size: 18px;
+    }
+    
+    .reading-mode .editor {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 0;
+    }
   </style>
 </head>
 <body>
   <header>
     <div class="bar">
-      <div class="brand"><span class="dot"></span><span id="app-title">TextBuddy Mobile</span></div>
+      <div class="brand"><span class="dot"></span><span id="app-title">TextBuddy Pro</span></div>
       <div class="controls">
         <select id="ui-language-select" title="UI Language">
           <option value="en">English</option>
@@ -272,20 +336,27 @@
             <option value="de">Deutsch</option>
           </select>
         </div>
-        <div class="button-group">
-          <button class="btn" id="check-grammar">Check Grammar</button>
-          <button class="btn secondary" id="fix-all">Fix All</button>
-          <button class="btn secondary" id="download-doc">Download Word</button>
-          <button class="btn secondary" id="download-pdf">Download PDF</button>
-          <button class="btn secondary" id="plagiarism-check">Check Plagiarism</button>
-          <button class="btn secondary" id="clear-editor">Clear</button>
+        <div class="button-group" id="focus-controls">
+          <button class="btn" id="check-grammar"><i class="fas fa-spell-check"></i> Grammar</button>
+          <button class="btn secondary" id="fix-all"><i class="fas fa-magic"></i> Fix All</button>
+          <button class="btn ai" id="ai-assist"><i class="fas fa-robot"></i> AI Assist</button>
+          <button class="btn secondary" id="focus-mode"><i class="fas fa-crosshairs"></i> Focus</button>
+          <button class="btn secondary" id="reading-mode"><i class="fas fa-book-reader"></i> Reading</button>
+          <button class="btn secondary" id="download-doc"><i class="fas fa-file-word"></i> Word</button>
+          <button class="btn secondary" id="download-pdf"><i class="fas fa-file-pdf"></i> PDF</button>
+          <button class="btn warning" id="plagiarism-check"><i class="fas fa-search"></i> Plagiarism</button>
+          <button class="btn secondary" id="clear-editor"><i class="fas fa-broom"></i> Clear</button>
         </div>
       </div>
 
       <div class="format-toolbar">
-        <button class="format-btn" data-command="bold" title="Bold">B</button>
-        <button class="format-btn" data-command="italic" title="Italic">I</button>
-        <button class="format-btn" data-command="underline" title="Underline">U</button>
+        <button class="format-btn" data-command="bold" title="Bold"><i class="fas fa-bold"></i></button>
+        <button class="format-btn" data-command="italic" title="Italic"><i class="fas fa-italic"></i></button>
+        <button class="format-btn" data-command="underline" title="Underline"><i class="fas fa-underline"></i></button>
+        <button class="format-btn" data-command="insertUnorderedList" title="Bullet List"><i class="fas fa-list-ul"></i></button>
+        <button class="format-btn" data-command="insertOrderedList" title="Numbered List"><i class="fas fa-list-ol"></i></button>
+        <button class="format-btn" id="speech-to-text" title="Speech to Text"><i class="fas fa-microphone"></i></button>
+        <button class="format-btn" id="text-to-speech" title="Text to Speech"><i class="fas fa-volume-up"></i></button>
       </div>
 
       <div id="text-editor" class="editor" contenteditable="true"></div>
@@ -310,28 +381,148 @@
       </div>
       <div id="suggestions-container" class="suggestions"></div>
 
-      <div class="side-head" style="margin-top: 15px;">
-        <div class="side-title">Text Statistics</div>
-      </div>
-      <div class="stats-grid">
-        <div class="stat-item">
-          <div>Readability Score</div>
-          <div id="readability-score">N/A</div>
-          <div class="progress-bar">
-            <div class="progress-fill" id="readability-bar" style="width: 0%"></div>
-          </div>
+      <!-- AI Features Section -->
+      <div class="ai-features">
+        <div class="side-head" style="margin-top: 15px;">
+          <div class="side-title"><i class="fas fa-robot"></i> AI Writing Assistant</div>
         </div>
-        <div class="stat-item">
-          <div>Grade Level</div>
-          <div id="grade-level">N/A</div>
+        
+        <textarea id="ai-prompt" class="ai-prompt" placeholder="Ask AI to improve, expand, or analyze your text..."></textarea>
+        
+        <div class="ai-actions">
+          <button class="btn ai" id="ai-improve"><i class="fas fa-wand-magic-sparkles"></i> Improve</button>
+          <button class="btn ai" id="ai-expand"><i class="fas fa-expand"></i> Expand</button>
+          <button class="btn ai" id="ai-summarize"><i class="fas fa-compress"></i> Summarize</button>
+          <button class="btn ai" id="ai-rephrase"><i class="fas fa-paragraph"></i> Rephrase</button>
         </div>
+        
+        <div id="ai-output" class="suggestions" style="margin-top: 10px;"></div>
       </div>
 
+      <!-- Advanced Features -->
       <div class="side-head" style="margin-top: 15px;">
-        <div class="side-title">Session History</div>
-        <button class="btn ghost" id="clear-history" style="padding: 2px 8px; font-size: 12px;">Clear</button>
+        <div class="side-title">Student Tools</div>
       </div>
-      <div id="history-container" style="max-height: 120px; overflow-y: auto;"></div>
+      
+      <div class="tab-container">
+        <div class="tab-buttons">
+          <button class="tab-btn active" data-tab="writing">Writing</button>
+          <button class="tab-btn" data-tab="research">Research</button>
+          <button class="tab-btn" data-tab="productivity">Productivity</button>
+        </div>
+        
+        <div class="tab-content">
+          <!-- Writing Tab -->
+          <div class="tab-panel" id="writing-tab">
+            <div class="advanced-features">
+              <div class="feature-card">
+                <h3><i class="fas fa-bullseye"></i> Word Goal</h3>
+                <div class="feature-content">
+                  <input type="number" id="word-goal" placeholder="Word target" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid rgba(0,0,0,.1);">
+                  <div class="goal-progress">
+                    <div class="goal-progress-fill" id="goal-progress-bar" style="width: 0%"></div>
+                  </div>
+                  <div id="goal-status">Set a word goal</div>
+                </div>
+              </div>
+              
+              <div class="feature-card">
+                <h3><i class="fas fa-hourglass-half"></i> Writing Timer</h3>
+                <div class="feature-content">
+                  <div class="timer-display" id="timer">00:00:00</div>
+                  <div style="display: flex; gap: 5px;">
+                    <button class="btn secondary" id="start-timer"><i class="fas fa-play"></i> Start</button>
+                    <button class="btn secondary" id="pause-timer"><i class="fas fa-pause"></i> Pause</button>
+                    <button class="btn secondary" id="reset-timer"><i class="fas fa-redo"></i> Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="feature-card" style="margin-top: 10px;">
+              <h3><i class="fas fa-book"></i> Essay Templates</h3>
+              <div class="feature-content">
+                <select id="essay-templates" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid rgba(0,0,0,.1);">
+                  <option value="">Select a template</option>
+                  <option value="argumentative">Argumentative Essay</option>
+                  <option value="narrative">Narrative Essay</option>
+                  <option value="descriptive">Descriptive Essay</option>
+                  <option value="expository">Expository Essay</option>
+                  <option value="compare-contrast">Compare & Contrast</option>
+                </select>
+                <button class="btn secondary" id="apply-template" style="width: 100%; margin-top: 8px;"><i class="fas fa-magic"></i> Apply Template</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Research Tab -->
+          <div class="tab-panel" id="research-tab" style="display: none;">
+            <div class="feature-card">
+              <h3><i class="fas fa-quote-right"></i> Citation Generator</h3>
+              <div class="feature-content">
+                <div class="citation-form">
+                  <select id="citation-style">
+                    <option value="apa">APA</option>
+                    <option value="mla">MLA</option>
+                    <option value="chicago">Chicago</option>
+                    <option value="harvard">Harvard</option>
+                  </select>
+                  <select id="source-type">
+                    <option value="book">Book</option>
+                    <option value="website">Website</option>
+                    <option value="journal">Journal Article</option>
+                    <option value="news">News Article</option>
+                  </select>
+                  <input type="text" id="author-input" placeholder="Author Name">
+                  <input type="text" id="title-input" placeholder="Title">
+                  <input type="text" id="year-input" placeholder="Year">
+                  <button class="btn secondary" id="generate-citation"><i class="fas fa-cog"></i> Generate Citation</button>
+                </div>
+                <div class="citation-result" id="citation-output"></div>
+              </div>
+            </div>
+            
+            <div class="feature-card" style="margin-top: 10px;">
+              <h3><i class="fas fa-book-open"></i> Research Notes</h3>
+              <div class="feature-content">
+                <textarea id="research-notes" placeholder="Add your research notes here..." style="width: 100%; height: 100px; padding: 8px; border-radius: 6px; border: 1px solid rgba(0,0,0,.1); resize: vertical;"></textarea>
+                <button class="btn secondary" id="save-notes" style="width: 100%; margin-top: 8px;"><i class="fas fa-save"></i> Save Notes</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Productivity Tab -->
+          <div class="tab-panel" id="productivity-tab" style="display: none;">
+            <div class="feature-card">
+              <h3><i class="fas fa-tasks"></i> Writing Statistics</h3>
+              <div class="feature-content">
+                <div id="writing-stats">
+                  <p>Words per minute: <span id="wpm-stat">0</span></p>
+                  <p>Time spent writing: <span id="time-writing">0 minutes</span></p>
+                  <p>Most used words: <span id="common-words">-</span></p>
+                </div>
+                <button class="btn secondary" id="reset-stats" style="width: 100%; margin-top: 8px;"><i class="fas fa-trash"></i> Reset Statistics</button>
+              </div>
+            </div>
+            
+            <div class="feature-card" style="margin-top: 10px;">
+              <h3><i class="fas fa-theater-masks"></i> Focus Mode</h3>
+              <div class="feature-content">
+                <p>Remove distractions for better concentration</p>
+                <button class="btn secondary" id="enable-focus" style="width: 100%;"><i class="fas fa-crosshairs"></i> Enable Focus Mode</button>
+              </div>
+            </div>
+            
+            <div class="feature-card" style="margin-top: 10px;">
+              <h3><i class="fas fa-cloud-download-alt"></i> Export Options</h3>
+              <div class="feature-content">
+                <button class="btn secondary" id="export-notes" style="width: 100%; margin-bottom: 5px;"><i class="fas fa-file-export"></i> Export Notes</button>
+                <button class="btn secondary" id="export-stats" style="width: 100%;"><i class="fas fa-chart-bar"></i> Export Stats</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="donate">
         <p id="label-support" style="margin:0 0 10px 0;font-weight:700">🙏 Support this free tool</p>
@@ -344,12 +535,17 @@
   </main>
 
   <script>
+    // ====== GEMINI API CONFIGURATION ======
+    const GEMINI_API_KEY = 'AIzaSyBq_2LxNgG6v8QrB0PreK80TONvdedkq4o';
+    const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+    
     // ====== ELEMENTS ======
     const body = document.body;
     const editor = document.getElementById('text-editor');
     const suggestionsEl = document.getElementById('suggestions-container');
     const checkBtn = document.getElementById('check-grammar');
     const fixAllBtn = document.getElementById('fix-all');
+    const aiAssistBtn = document.getElementById('ai-assist');
     const wordCountEl = document.getElementById('word-count');
     const charCountEl = document.getElementById('char-count');
     const issuesCountEl = document.getElementById('issues-count');
@@ -369,34 +565,75 @@
     const historyContainer = document.getElementById('history-container');
     const clearHistoryBtn = document.getElementById('clear-history');
     const autoSaveStatus = document.getElementById('auto-save-status');
+    
+    // AI Elements
+    const aiPrompt = document.getElementById('ai-prompt');
+    const aiImproveBtn = document.getElementById('ai-improve');
+    const aiExpandBtn = document.getElementById('ai-expand');
+    const aiSummarizeBtn = document.getElementById('ai-summarize');
+    const aiRephraseBtn = document.getElementById('ai-rephrase');
+    const aiOutput = document.getElementById('ai-output');
+    
+    // New elements for advanced features
+    const focusModeBtn = document.getElementById('focus-mode');
+    const readingModeBtn = document.getElementById('reading-mode');
+    const speechToTextBtn = document.getElementById('speech-to-text');
+    const textToSpeechBtn = document.getElementById('text-to-speech');
+    const wordGoalInput = document.getElementById('word-goal');
+    const goalProgressBar = document.getElementById('goal-progress-bar');
+    const goalStatus = document.getElementById('goal-status');
+    const startTimerBtn = document.getElementById('start-timer');
+    const pauseTimerBtn = document.getElementById('pause-timer');
+    const resetTimerBtn = document.getElementById('reset-timer');
+    const timerDisplay = document.getElementById('timer');
+    const essayTemplates = document.getElementById('essay-templates');
+    const applyTemplateBtn = document.getElementById('apply-template');
+    const citationStyle = document.getElementById('citation-style');
+    const sourceType = document.getElementById('source-type');
+    const authorInput = document.getElementById('author-input');
+    const titleInput = document.getElementById('title-input');
+    const yearInput = document.getElementById('year-input');
+    const generateCitationBtn = document.getElementById('generate-citation');
+    const citationOutput = document.getElementById('citation-output');
+    const researchNotes = document.getElementById('research-notes');
+    const saveNotesBtn = document.getElementById('save-notes');
+    const wpmStat = document.getElementById('wpm-stat');
+    const timeWriting = document.getElementById('time-writing');
+    const commonWords = document.getElementById('common-words');
+    const resetStatsBtn = document.getElementById('reset-stats');
+    const enableFocusBtn = document.getElementById('enable-focus');
+    const exportNotesBtn = document.getElementById('export-notes');
+    const exportStatsBtn = document.getElementById('export-stats');
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanels = document.querySelectorAll('.tab-panel');
 
     // ====== UI TRANSLATIONS ======
     const T = {
-      en:{ title:"TextBuddy Mobile", write:"Write your text:", words:"Words", chars:"Characters", issues:"Issues",
+      en:{ title:"TextBuddy Pro", write:"Write your text:", words:"Words", chars:"Characters", issues:"Issues",
            sentences:"Sentences", readingTime:"Reading Time", suggestions:"Suggestions", live:"Live", support:"🙏 Support this free tool",
            donate:"💖 Donate on DeStream", check:"Check Grammar", fix:"Fix All",
            dword:"Download Word", dpdf:"Download PDF", plag:"Check Plagiarism", clear:"Clear",
            checking:"Checking...", allfixed:"All issues fixed ✅", clicktofix:"Click red highlights to apply fix",
            autosave:"Auto-saved", saving:"Saving...", saved:"Saved", error:"Error" },
-      ur:{ title:"TextBuddy Mobile", write:"اپنا متن لکھیں:", words:"الفاظ", chars:"حروف", issues:"مسائل",
+      ur:{ title:"TextBuddy Pro", write:"اپنا متن لکھیں:", words:"الفاظ", chars:"حروف", issues:"مسائل",
            sentences:"جملے", readingTime:"پڑھنے کا وقت", suggestions:"تجاویز", live:"فعال", support:"🙏 اس مفت ٹول کی مدد کریں",
            donate:"💖 ڈونیٹ کریں (DeStream)", check:"گرامر چیک کریں", fix:"سب درست کریں",
            dword:"ورڈ فائل ڈاؤنلوڈ", dpdf:"PDF ڈاؤنلوڈ", plag:"پلینجرزم چیک کریں", clear:"صاف کریں",
            checking:"چیک ہو رہا ہے...", allfixed:"تمام غلطیاں درست ✅", clicktofix:"درستگی کیلئے ہائی لائٹ پر کلک کریں",
            autosave:"خود بخود محفوظ", saving:"محفوظ ہو رہا ہے...", saved:"محفوظ ہو گیا", error:"خرابی" },
-      hi:{ title:"TextBuddy Mobile", write:"अपना पाठ लिखें:", words:"शब्द", chars:"अक्षर", issues:"गलतियाँ",
+      hi:{ title:"TextBuddy Pro", write:"अपना पाठ लिखें:", words:"शब्द", chars:"अक्षर", issues:"गलतियाँ",
            sentences:"वाक्य", readingTime:"पढ़ने का समय", suggestions:"सुझाव", live:"लाइव", support:"🙏 इस मुफ्त टूल को सपोर्ट करें",
            donate:"💖 DeStream पर दान करें", check:"ग्रामर जाँचें", fix:"सब सुधारें",
            dword:"वर्ड डाउनलोड", dpdf:"PDF डाउनलोड", plag:"प्लेजरिज़्म जाँचें", clear:"साफ करें",
            checking:"जाँच हो रही है...", allfixed:"सारी गलतियाँ ठीक ✅", clicktofix:"सुधार के लिए लाल टेक्स्ट पर क्लिक करें",
            autosave:"स्वतः सहेजा गया", saving:"सहेजा जा रहा है...", saved:"सहेजा गया", error:"त्रुटि" },
-      fr:{ title:"TextBuddy Mobile", write:"Écrivez votre texte :", words:"Mots", chars:"Caractères", issues:"Problèmes",
+      fr:{ title:"TextBuddy Pro", write:"Écrivez votre texte :", words:"Mots", chars:"Caractères", issues:"Problèmes",
            sentences:"Phrases", readingTime:"Temps de lecture", suggestions:"Suggestions", live:"Actif", support:"🙏 Soutenez cet outil gratuit",
            donate:"💖 Faire un don sur DeStream", check:"Vérifier la grammaire", fix:"Tout corriger",
            dword:"Télécharger Word", dpdf:"Télécharger PDF", plag:"Vérifier le plagiat", clear:"Effacer",
            checking:"Vérification...", allfixed:"Tout corrigé ✅", clicktofix:"Cliquez sur les surbrillances rouges pour corriger",
            autosave:"Enregistrement auto", saving:"Enregistrement...", saved:"Enregistré", error:"Erreur" },
-      es:{ title:"TextBuddy Mobile", write:"Escribe tu texto:", words:"Palabras", chars:"Caracteres", issues:"Errores",
+      es:{ title:"TextBuddy Pro", write:"Escribe tu texto:", words:"Palabras", chars:"Caracteres", issues:"Errores",
            sentences:"Oraciones", readingTime:"Tiempo de lectura", suggestions:"Sugerencias", live:"Activo", support:"🙏 Apoya esta herramienta gratuita",
            donate:"💖 Donar en DeStream", check:"Revisar gramática", fix:"Corregir todo",
            dword:"Descargar Word", dpdf:"Descargar PDF", plag:"Verificar plagio", clear:"Limpiar",
@@ -422,12 +659,13 @@
       document.getElementById('label-live').textContent = t.live;
       document.getElementById('label-support').textContent = t.support;
       document.getElementById('label-donate').textContent = t.donate;
-      checkBtn.textContent = t.check;
-      fixAllBtn.textContent = t.fix;
-      downloadDocBtn.textContent = t.dword;
-      downloadPdfBtn.textContent = t.dpdf;
-      plagBtn.textContent = t.plag;
-      clearEditorBtn.textContent = t.clear;
+      checkBtn.innerHTML = '<i class="fas fa-spell-check"></i> ' + t.check;
+      fixAllBtn.innerHTML = '<i class="fas fa-magic"></i> ' + t.fix;
+      aiAssistBtn.innerHTML = '<i class="fas fa-robot"></i> AI Assist';
+      downloadDocBtn.innerHTML = '<i class="fas fa-file-word"></i> ' + t.dword;
+      downloadPdfBtn.innerHTML = '<i class="fas fa-file-pdf"></i> ' + t.dpdf;
+      plagBtn.innerHTML = '<i class="fas fa-search"></i> ' + t.plag;
+      clearEditorBtn.innerHTML = '<i class="fas fa-broom"></i> ' + t.clear;
       autoSaveStatus.innerHTML = t.autosave + '<span class="tooltiptext">Content is automatically saved</span>';
       localStorage.setItem('uiLang', lang);
       currentUILang = lang;
@@ -508,6 +746,9 @@
       charCountEl.textContent = txt.length;
       sentenceCountEl.textContent = sentences;
       readingTimeEl.textContent = `${readingTime} min`;
+      
+      // Update word goal progress
+      updateWordGoalProgress(words);
       
       // Calculate readability score
       calculateReadability(txt);
@@ -820,6 +1061,105 @@
 
     checkBtn.addEventListener('click', runGrammar);
 
+    // ====== GEMINI AI INTEGRATION ======
+    async function callGeminiAPI(prompt, text) {
+      try {
+        const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `${prompt}\n\nText: "${text}"`
+              }]
+            }]
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Gemini API error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        return data.candidates[0].content.parts[0].text;
+      } catch (error) {
+        console.error('Error calling Gemini API:', error);
+        throw error;
+      }
+    }
+
+    // AI Assist function
+    async function runAIAssist(action) {
+      const text = stripHtml(editor.innerHTML);
+      if (!text.trim()) {
+        alert('Please write some text first!');
+        return;
+      }
+      
+      const t = T[currentUILang] || T.en;
+      
+      // Show loading state
+      aiOutput.innerHTML = '<div class="suggestion"><b><span class="loading"></span> AI is thinking...</b></div>';
+      
+      let prompt = '';
+      switch(action) {
+        case 'improve':
+          prompt = 'Improve the following text for clarity, grammar, and style while preserving its original meaning:';
+          break;
+        case 'expand':
+          prompt = 'Expand the following text by adding more details, examples, and explanations:';
+          break;
+        case 'summarize':
+          prompt = 'Summarize the following text concisely while keeping the main points:';
+          break;
+        case 'rephrase':
+          prompt = 'Rephrase the following text using different words and sentence structures:';
+          break;
+        case 'custom':
+          prompt = aiPrompt.value;
+          if (!prompt.trim()) {
+            alert('Please enter a custom prompt for the AI.');
+            return;
+          }
+          break;
+      }
+      
+      try {
+        const result = await callGeminiAPI(prompt, text);
+        aiOutput.innerHTML = `
+          <div class="suggestion ai-suggestion">
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px">
+              <span class="badge" style="background:var(--ai);">AI Suggestion</span>
+              <span>${action.charAt(0).toUpperCase() + action.slice(1)}</span>
+            </div>
+            <div style="margin-bottom:10px;">${escapeHtml(result)}</div>
+            <button class="btn ai" style="width:100%" onclick="applyAISuggestion('${escapeHtml(result)}')">
+              <i class="fas fa-check"></i> Apply Suggestion
+            </button>
+          </div>
+        `;
+      } catch (error) {
+        aiOutput.innerHTML = `<div class="suggestion" style="color:var(--error)">Error: Unable to get AI response. Please try again.</div>`;
+      }
+    }
+
+    // Apply AI suggestion
+    function applyAISuggestion(suggestion) {
+      editor.innerHTML = suggestion;
+      updateCounts();
+      autoSave();
+      aiOutput.innerHTML = '<div class="suggestion"><b>AI suggestion applied successfully! ✅</b></div>';
+    }
+
+    // AI event listeners
+    aiImproveBtn.addEventListener('click', () => runAIAssist('improve'));
+    aiExpandBtn.addEventListener('click', () => runAIAssist('expand'));
+    aiSummarizeBtn.addEventListener('click', () => runAIAssist('summarize'));
+    aiRephraseBtn.addEventListener('click', () => runAIAssist('rephrase'));
+    aiAssistBtn.addEventListener('click', () => runAIAssist('custom'));
+
     // ====== DOWNLOADS ======
     downloadDocBtn.addEventListener('click', () => {
       const text = stripHtml(editor.innerHTML);
@@ -941,6 +1281,317 @@
       }
     });
 
+    // ====== ADVANCED FEATURES ======
+
+    // Tab navigation
+    tabButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        // Remove active class from all buttons
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        // Hide all tab panels
+        tabPanels.forEach(panel => panel.style.display = 'none');
+        
+        // Add active class to clicked button
+        button.classList.add('active');
+        // Show the corresponding tab panel
+        const tabId = button.getAttribute('data-tab') + '-tab';
+        document.getElementById(tabId).style.display = 'block';
+      });
+    });
+
+    // Word goal tracking
+    function updateWordGoalProgress(currentWords) {
+      const goal = parseInt(localStorage.getItem('wordGoal') || 0);
+      if (goal > 0) {
+        const percentage = Math.min(100, (currentWords / goal) * 100);
+        goalProgressBar.style.width = `${percentage}%`;
+        goalStatus.textContent = `${currentWords}/${goal} words (${Math.round(percentage)}%)`;
+        
+        if (currentWords >= goal) {
+          goalStatus.innerHTML = '<i class="fas fa-trophy" style="color: var(--primary);"></i> Goal achieved!';
+        }
+      } else {
+        goalStatus.textContent = 'Set a word goal';
+        goalProgressBar.style.width = '0%';
+      }
+    }
+
+    wordGoalInput.addEventListener('change', () => {
+      const goal = parseInt(wordGoalInput.value) || 0;
+      localStorage.setItem('wordGoal', goal);
+      updateWordGoalProgress(parseInt(wordCountEl.textContent));
+    });
+
+    // Load saved word goal
+    const savedGoal = localStorage.getItem('wordGoal');
+    if (savedGoal) {
+      wordGoalInput.value = savedGoal;
+      updateWordGoalProgress(parseInt(wordCountEl.textContent));
+    }
+
+    // Writing timer
+    let timerInterval = null;
+    let timerSeconds = 0;
+    let timerRunning = false;
+
+    function updateTimerDisplay() {
+      const hours = Math.floor(timerSeconds / 3600);
+      const minutes = Math.floor((timerSeconds % 3600) / 60);
+      const seconds = timerSeconds % 60;
+      
+      timerDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    startTimerBtn.addEventListener('click', () => {
+      if (!timerRunning) {
+        timerRunning = true;
+        timerInterval = setInterval(() => {
+          timerSeconds++;
+          updateTimerDisplay();
+          // Update writing statistics
+          const timeWritingElement = document.getElementById('time-writing');
+          if (timeWritingElement) {
+            const minutes = Math.floor(timerSeconds / 60);
+            timeWritingElement.textContent = `${minutes} minutes`;
+          }
+        }, 1000);
+      }
+    });
+
+    pauseTimerBtn.addEventListener('click', () => {
+      if (timerRunning) {
+        timerRunning = false;
+        clearInterval(timerInterval);
+      }
+    });
+
+    resetTimerBtn.addEventListener('click', () => {
+      timerRunning = false;
+      clearInterval(timerInterval);
+      timerSeconds = 0;
+      updateTimerDisplay();
+    });
+
+    // Essay templates
+    const essayStructures = {
+      argumentative: "<h2>Introduction</h2><p>Introduce your topic and state your thesis.</p><h2>Body Paragraphs</h2><p>Present your arguments with supporting evidence.</p><h2>Counterargument</h2><p>Address opposing viewpoints.</p><h2>Conclusion</h2><p>Summarize your arguments and restate your thesis.</p>",
+      narrative: "<h2>Introduction</h2><p>Set the scene and introduce characters.</p><h2>Plot Development</h2><p>Describe the sequence of events.</p><h2>Climax</h2><p>Present the turning point of your story.</p><h2>Conclusion</h2><p>Resolve the story and share the lesson learned.</p>",
+      descriptive: "<h2>Introduction</h2><p>Introduce the subject of your description.</p><h2>Detailed Description</h2><p>Use sensory details to describe your subject.</p><h2>Significance</h2><p>Explain why this subject is important.</p><h2>Conclusion</h2><p>Summarize your description.</p>",
+      expository: "<h2>Introduction</h2><p>Introduce the topic and your thesis.</p><h2>Explanation</h2<p>Explain the topic with facts and examples.</p><h2>Analysis</h2><p>Analyze the information presented.</p><h2>Conclusion</h2><p>Summarize your explanation.</p>",
+      "compare-contrast": "<h2>Introduction</h2><p>Introduce the two subjects being compared.</p><h2>Similarities</h2><p>Discuss how the subjects are similar.</p><h2>Differences</h2><p>Discuss how the subjects are different.</p><h2>Conclusion</h2><p>Summarize the comparison and state which is better (if applicable).</p>"
+    };
+
+    applyTemplateBtn.addEventListener('click', () => {
+      const templateType = essayTemplates.value;
+      if (templateType && essayStructures[templateType]) {
+        if (editor.innerHTML.trim() && !confirm('Applying a template will replace your current content. Continue?')) {
+          return;
+        }
+        editor.innerHTML = essayStructures[templateType];
+        updateCounts();
+        autoSave();
+      }
+    });
+
+    // Citation generator
+    generateCitationBtn.addEventListener('click', () => {
+      const style = citationStyle.value;
+      const type = sourceType.value;
+      const author = authorInput.value;
+      const title = titleInput.value;
+      const year = yearInput.value;
+      
+      if (!author || !title || !year) {
+        citationOutput.textContent = "Please fill in all required fields.";
+        return;
+      }
+      
+      let citation = "";
+      
+      // Simple citation examples (in real app, you'd use a proper citation library)
+      if (style === "apa") {
+        if (type === "book") {
+          citation = `${author} (${year}). <i>${title}</i>. Publisher.`;
+        } else if (type === "website") {
+          citation = `${author} (${year}). ${title}. Retrieved from URL`;
+        }
+      } else if (style === "mla") {
+        if (type === "book") {
+          citation = `${author}. <i>${title}</i>. Publisher, ${year}.`;
+        } else if (type === "website") {
+          citation = `"${title}." Website Name, ${year}, URL. Accessed Day Month Year.`;
+        }
+      } else if (style === "chicago") {
+        if (type === "book") {
+          citation = `${author}. <i>${title</i>. Publisher, ${year}.`;
+        } else if (type === "website") {
+          citation = `${author}. "${title}." Website Name. Last modified Month Day, ${year}. URL.`;
+        }
+      } else if (style === "harvard") {
+        if (type === "book") {
+          citation = `${author} (${year}) <i>${title}</i>, Publisher.`;
+        } else if (type === "website") {
+          citation = `${author} (${year}) '${title}', Website Name [online]. Available at: URL (Accessed: Day Month Year).`;
+        }
+      }
+      
+      citationOutput.innerHTML = citation;
+    });
+
+    // Research notes
+    const savedNotes = localStorage.getItem('researchNotes');
+    if (savedNotes) {
+      researchNotes.value = savedNotes;
+    }
+
+    saveNotesBtn.addEventListener('click', () => {
+      localStorage.setItem('researchNotes', researchNotes.value);
+      const t = T[currentUILang] || T.en;
+      saveNotesBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+      setTimeout(() => {
+        saveNotesBtn.innerHTML = '<i class="fas fa-save"></i> Save Notes';
+      }, 2000);
+    });
+
+    // Focus mode
+    enableFocusBtn.addEventListener('click', () => {
+      body.classList.toggle('focus-mode');
+      if (body.classList.contains('focus-mode')) {
+        enableFocusBtn.innerHTML = '<i class="fas fa-times"></i> Exit Focus Mode';
+      } else {
+        enableFocusBtn.innerHTML = '<i class="fas fa-crosshairs"></i> Enable Focus Mode';
+      }
+    });
+
+    focusModeBtn.addEventListener('click', () => {
+      body.classList.toggle('focus-mode');
+      if (body.classList.contains('focus-mode')) {
+        focusModeBtn.innerHTML = '<i class="fas fa-times"></i> Exit Focus';
+      } else {
+        focusModeBtn.innerHTML = '<i class="fas fa-crosshairs"></i> Focus';
+      }
+    });
+
+    // Reading mode
+    readingModeBtn.addEventListener('click', () => {
+      editor.classList.toggle('reading-mode');
+      if (editor.classList.contains('reading-mode')) {
+        readingModeBtn.innerHTML = '<i class="fas fa-times"></i> Exit Reading';
+      } else {
+        readingModeBtn.innerHTML = '<i class="fas fa-book-reader"></i> Reading';
+      }
+    });
+
+    // Speech to text
+    speechToTextBtn.addEventListener('click', () => {
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = langSelect.value;
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        
+        recognition.start();
+        speechToTextBtn.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+        
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          document.execCommand('insertText', false, transcript);
+          autoSave();
+          speechToTextBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+        };
+        
+        recognition.onerror = () => {
+          speechToTextBtn.innerHTML = '<i class="fas fa-microphone"></i>';
+          alert('Speech recognition error. Please try again.');
+        };
+      } else {
+        alert('Speech recognition is not supported in your browser.');
+      }
+    });
+
+    // Text to speech
+    textToSpeechBtn.addEventListener('click', () => {
+      const text = stripHtml(editor.innerHTML);
+      if (!text.trim()) {
+        alert('No text to read aloud.');
+        return;
+      }
+      
+      if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = langSelect.value;
+        utterance.rate = 0.9;
+        
+        textToSpeechBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        speechSynthesis.speak(utterance);
+        
+        utterance.onend = () => {
+          textToSpeechBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        };
+      } else {
+        alert('Text-to-speech is not supported in your browser.');
+      }
+    });
+
+    // Export functions
+    exportNotesBtn.addEventListener('click', () => {
+      const notes = researchNotes.value;
+      if (!notes.trim()) {
+        alert('No notes to export.');
+        return;
+      }
+      
+      const blob = new Blob([notes], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'research_notes.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    exportStatsBtn.addEventListener('click', () => {
+      const stats = `
+TextBuddy Pro - Writing Statistics
+----------------------------------
+Words: ${wordCountEl.textContent}
+Characters: ${charCountEl.textContent}
+Sentences: ${sentenceCountEl.textContent}
+Reading Time: ${readingTimeEl.textContent}
+Readability Score: ${readabilityScoreEl.textContent}
+Grade Level: ${gradeLevelEl.textContent}
+Time Spent Writing: ${document.getElementById('time-writing').textContent}
+      `.trim();
+      
+      const blob = new Blob([stats], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'writing_stats.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+
+    // Reset statistics
+    resetStatsBtn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to reset all writing statistics?')) {
+        localStorage.removeItem('writingStats');
+        document.getElementById('time-writing').textContent = '0 minutes';
+        document.getElementById('wpm-stat').textContent = '0';
+        document.getElementById('common-words').textContent = '-';
+        timerSeconds = 0;
+        updateTimerDisplay();
+        if (timerInterval) {
+          clearInterval(timerInterval);
+          timerRunning = false;
+        }
+      }
+    });
+
     // ====== QUALITY OF LIFE ======
     // Paste as plain text (avoid weird HTML)
     editor.addEventListener('paste', (e) => {
@@ -968,6 +1619,12 @@
       if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
         e.preventDefault();
         runGrammar();
+      }
+      
+      // Ctrl/Cmd + Shift + A for AI assist
+      if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'A') {
+        e.preventDefault();
+        runAIAssist('custom');
       }
     });
 
